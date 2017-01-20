@@ -6,7 +6,7 @@ class WitDataWarehouseClient:
     def __init__(self):
         self.mongo = None
 
-    def sync_row_data(self, category, collect, data):
+    def sync_row_data(self, category, collection, data):
         self.mongo = MongoClient()
 
     def sync_row_data_iter(self, category, collect, data):
