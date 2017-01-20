@@ -13,7 +13,6 @@ class MongoDatasource(ETLDatasource):
 
     def row_data_set(self):
         for doc in self.collection.find():
-            print 'read data'
             yield doc
 
 class MongoConnector(DataConnector):
