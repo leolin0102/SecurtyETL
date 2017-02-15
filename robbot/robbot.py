@@ -1,25 +1,50 @@
 __author__ = 'lin'
-from react_action import take_step
-from env.task import Context
-from behavior.behavior import react_with_context
-from mongo.mongo_sync_react import get_react_with_context
+from react.reactor import *
+from mongo.mongo_sync_react import register_mongo_reace
 
-class Robbot:
+
+
+class DiscoverQueue(object):
     def __init__(self):
-        self.context = Context(self, get_react_with_context)
+        self.discovers = []
 
-    def take_step(self):
-        if self.context.tasksQueue.count() > 0:
-            task = self.context.tasksQueue.pop_task()
-            task.action(self.context)
+    def push_discover(self, discover):
+        self.discovers.append(discover)
+
+    def pop_discover(self):
+        discover = self.discovers.pop()
+        return discover
+
+    def next_discover(self):
+        if len(self.discovers) > 0:
+            return self.discovers[0]
         else:
-            react = react_with_context(self.context)
-            if react is not None:
-                return react(self.context)
+            return None
+
+    def count(self):
+        return len(self.discovers)
+
+class Context:
+    def __init__(self, robbot):
+        self.robbot = robbot
+        self.states = None
+        self.env = {}
+        self.discoverQueue = DiscoverQueue()
+
+class Robbot1(object):
+    def __init__(self):
+        pass
 
     def run(self):
-        while True:
-            result = self.take_step()
-            if result is False:
-                break
+        context = Context(self)
+        react_stack = ReactStack()
+        register_mongo_reace(react_stack)
+        discover = Discover('init', {})
+        react_with_current_context(None, react_stack, discover, context)
 
+def init(state, discover, context):
+    print 'init'
+
+if __name__ == '__main__':
+    robbot = Robbot1()
+    robbot.run()
